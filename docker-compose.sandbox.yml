@@ -1,3 +1,6 @@
+# Docker Compose 設定 - 支援沙箱模式
+# 這個檔案是 docker-compose.yml 的擴展版本，加入了 Docker socket 掛載以支援沙箱功能
+
 services:
   openclaw-gateway:
     image: ${OPENCLAW_IMAGE:-openclaw:local}
@@ -8,17 +11,12 @@ services:
       CLAUDE_AI_SESSION_KEY: ${CLAUDE_AI_SESSION_KEY}
       CLAUDE_WEB_SESSION_KEY: ${CLAUDE_WEB_SESSION_KEY}
       CLAUDE_WEB_COOKIE: ${CLAUDE_WEB_COOKIE}
-      # Ollama 配置（用於本地模型）
-      OLLAMA_API_KEY: ${OLLAMA_API_KEY:-ollama-local}
-      # 如果 Ollama 運行在主機上，使用 host.docker.internal（macOS Docker Desktop）
-      # 或者明確設定 OLLAMA_BASE_URL（可選，預設會自動發現）
-      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
-    user: "1000:999"
     volumes:
+      # 標準配置和 workspace 掛載
       - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
       - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
-      # Docker socket 掛載：允許 Gateway 創建和管理沙箱容器
-      # 這是啟用 sandbox 功能的必要設定
+      # ⚠️ 重要：掛載 Docker socket 以支援沙箱功能
+      # 這允許 Gateway 容器內部的 OpenClaw 能夠創建和管理沙箱容器
       - /var/run/docker.sock:/var/run/docker.sock:ro
     ports:
       - "${OPENCLAW_GATEWAY_PORT:-18789}:18789"
@@ -34,7 +32,6 @@ services:
         "${OPENCLAW_GATEWAY_BIND:-lan}",
         "--port",
         "18789",
-        "--allow-unconfigured",
       ]
 
   openclaw-cli:
@@ -47,14 +44,11 @@ services:
       CLAUDE_AI_SESSION_KEY: ${CLAUDE_AI_SESSION_KEY}
       CLAUDE_WEB_SESSION_KEY: ${CLAUDE_WEB_SESSION_KEY}
       CLAUDE_WEB_COOKIE: ${CLAUDE_WEB_COOKIE}
-      # Ollama 配置（用於本地模型）
-      OLLAMA_API_KEY: ${OLLAMA_API_KEY:-ollama-local}
-      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
-    user: "1000:999"
     volumes:
+      # 標準配置和 workspace 掛載
       - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
       - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
-      # Docker socket 掛載：CLI 也需要以支援 sandbox 相關命令
+      # CLI 容器也需要 Docker socket（用於 sandbox 相關命令）
       - /var/run/docker.sock:/var/run/docker.sock:ro
     stdin_open: true
     tty: true

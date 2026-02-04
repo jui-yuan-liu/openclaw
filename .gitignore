@@ -69,5 +69,9 @@ IDENTITY.md
 USER.md
 .tgz
 
+# OpenClaw 本地配置（包含敏感資訊：API keys, tokens, 會話數據）
+.openclaw/
+**/.openclaw/
+
 # local tooling
 .serena/
