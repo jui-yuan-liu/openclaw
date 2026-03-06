@@ -34,6 +34,12 @@ ENV NODE_ENV=production
 # Allow non-root user to write temp files during runtime/tests.
 RUN chown -R node:node /app
 
+# Optional: expose openclaw CLI as a single command for scripts/exec inside container.
+# Absolute path for CLI is: node /app/dist/index.js
+RUN echo '#!/bin/sh\nexec node /app/dist/index.js "$@"' > /usr/local/bin/openclaw \
+  && chmod +x /usr/local/bin/openclaw \
+  && chown node:node /usr/local/bin/openclaw
+
 # Security hardening: Run as non-root user
 # The node:22-bookworm image includes a 'node' user (uid 1000)
 # This reduces the attack surface by preventing container escape via root privileges

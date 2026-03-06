@@ -13,7 +13,9 @@ services:
       # 如果 Ollama 運行在主機上，使用 host.docker.internal（macOS Docker Desktop）
       # 或者明確設定 OLLAMA_BASE_URL（可選，預設會自動發現）
       OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
-    user: "1000:999"
+      # Gemini API Key（用於 Google Gemini 模型）
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+    user: "0:0"
     volumes:
       - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
       - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
@@ -23,6 +25,7 @@ services:
     ports:
       - "${OPENCLAW_GATEWAY_PORT:-18789}:18789"
       - "${OPENCLAW_BRIDGE_PORT:-18790}:18790"
+      - "3000-3100:3000-3100"
     init: true
     restart: unless-stopped
     command:
@@ -50,7 +53,9 @@ services:
       # Ollama 配置（用於本地模型）
       OLLAMA_API_KEY: ${OLLAMA_API_KEY:-ollama-local}
       OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
-    user: "1000:999"
+      # Gemini API Key（用於 Google Gemini 模型）
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+    user: "0:0"
     volumes:
       - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
       - ${OPENCLAW_WORKSPACE_DIR}:/home/node/.openclaw/workspace
