@@ -8,6 +8,7 @@ services:
       CLAUDE_AI_SESSION_KEY: ${CLAUDE_AI_SESSION_KEY}
       CLAUDE_WEB_SESSION_KEY: ${CLAUDE_WEB_SESSION_KEY}
       CLAUDE_WEB_COOKIE: ${CLAUDE_WEB_COOKIE}
+      BRAVE_API_KEY: ${BRAVE_API_KEY}
       # Ollama 配置（用於本地模型）
       OLLAMA_API_KEY: ${OLLAMA_API_KEY:-ollama-local}
       # 如果 Ollama 運行在主機上，使用 host.docker.internal（macOS Docker Desktop）
@@ -55,6 +56,7 @@ services:
       OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
       # Gemini API Key（用於 Google Gemini 模型）
       GEMINI_API_KEY: ${GEMINI_API_KEY}
+      BRAVE_API_KEY: ${BRAVE_API_KEY}
     user: "0:0"
     volumes:
       - ${OPENCLAW_CONFIG_DIR}:/home/node/.openclaw
